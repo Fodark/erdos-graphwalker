@@ -33,3 +33,24 @@
 2020-04-05 13:37:39.810+0000 INFO  [neo4j]: logged in
 2020-04-05 13:37:39.826+0000 INFO  [neo4j]: logged in
 2020-04-05 13:37:39.844+0000 INFO  [neo4j]: logged in
+2020-04-21 21:42:07.723+0000 INFO  [neo4j]: logged in
+2020-04-21 21:42:39.661+0000 INFO  [neo4j]: logged in
+2020-04-21 21:42:43.737+0000 INFO  [neo4j]: logged in
+2020-04-21 21:49:42.847+0000 ERROR []: failed to log in: invalid principal or credentials
+2020-04-21 21:49:50.270+0000 INFO  [neo4j]: logged in
+2020-04-21 21:51:44.565+0000 INFO  [neo4j]: logged in
+2020-04-21 21:52:58.987+0000 INFO  [neo4j]: logged in
+2020-04-21 21:53:06.780+0000 INFO  [neo4j]: logged in
+2020-04-21 21:53:24.347+0000 INFO  [neo4j]: logged in
+2020-04-21 21:56:40.957+0000 INFO  [neo4j]: logged in
+2020-04-21 21:56:50.322+0000 INFO  [neo4j]: logged in
+2020-04-21 21:58:48.073+0000 INFO  [neo4j]: logged in
+2020-04-21 21:59:43.908+0000 INFO  [neo4j]: logged in
+2020-04-21 22:00:27.940+0000 INFO  [neo4j]: logged in
+2020-04-21 22:00:46.780+0000 INFO  [neo4j]: logged in
+2020-04-21 22:01:35.710+0000 INFO  [neo4j]: logged in
+2020-04-21 22:02:31.954+0000 INFO  [neo4j]: logged in
+2020-04-21 22:03:07.350+0000 INFO  [neo4j]: logged in
+2020-04-21 22:15:01.267+0000 ERROR []: failed to log in: invalid principal or credentials
+2020-04-21 22:15:08.326+0000 INFO  [neo4j]: logged in
+2020-04-22 11:29:22.314+0000 INFO  [neo4j]: logged in
