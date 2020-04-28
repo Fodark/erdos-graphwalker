@@ -1,2 +1,3 @@
 neo4j/data/*
 neo4j/logs/*
+flask/**/__pycache__
