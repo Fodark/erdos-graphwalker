@@ -4,21 +4,22 @@
 
 - `client` contains the frontend in React
 - `flask` contains the API written in Python with Flask
+  - `app.py` contains the entrypoint of the Flask application
+  - `aragog.py` contains the Google Scholar crawler
 - `neo4j` contains Neo4j data
 
 
 ### How to start
 
 #### Neo4j
-- `docker-compose build neo` created Neo4j docker image, run **only the first time**
-- `docker-compose run neo` starts Neo4j container, and makes DB accessible
+- `docker-compose up neo` creates and runs neo4j container
 
 #### Flask
 - `cd flask`
 - `pip install requirements.txt` installs Python packages
-- `python flask/app.py` starts Python API
+- `python app.py` starts Python API
 
 #### React
 - `cd client`
-- `npm install` installs required packages
-- `npm start` starts the application
+- `pnpm install` installs required packages
+- `pnpm start` starts the application
