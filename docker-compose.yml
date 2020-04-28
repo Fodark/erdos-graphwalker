@@ -26,6 +26,8 @@ services:
       dockerfile: Dockerfile
     ports: 
       - 5000:5000
+    volumes:
+      - "./flask:/usr/src/app"
     networks: [bdt]
   
   react:
