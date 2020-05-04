@@ -41,6 +41,14 @@ services:
       - "./client:/app"
       - "./client/app/node_modules"
     stdin_open: true
+  
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    networks: [bdt]
+    volumes:
+      - "./redis-data:/data"
 
 networks: 
   bdt:
