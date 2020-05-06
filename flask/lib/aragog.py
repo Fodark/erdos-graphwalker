@@ -1,29 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote 
+import redis
 
+r = redis.Redis(host="localhost", port=6379, db=0)
 
 BASE_URL = "https://scholar.google.com"
 SEARCH_AUTHOR_URL = BASE_URL + "/scholar?hl=it&as_sdt=0%2C5&q={}&btnG="
 COATHOURS_URL = BASE_URL + "/citations?view_op=list_colleagues&hl=it&json=&user={}#t=gsc_cod_lc"
 
-
-def extract_coauthors(id_):
-    # download the coauthors page
-    page_coauthors = requests.get(COATHOURS_URL.format(id_))
-    soup_elenco_coauthors = BeautifulSoup(page_coauthors.content, 'html.parser')
-    soup_profili_coauthors = soup_elenco_coauthors.find_all('h3', class_="gs_ai_name")
-
-    list_name_id = []
-
-    # extract id and name for every coauthor
-    for el in soup_profili_coauthors:
-        id_coauthors = el.a['href'].split('user=')[1]
-        name = el.a.string
-        list_name_id.append((name,id_coauthors))
-        # print("id: ",id_coauthors,"name: ",name)
-
-    return list_name_id
 
 
 def search(q):
@@ -41,8 +26,10 @@ def search(q):
     if len(soup_profili) == 1:
         quasi_id = soup_profili[0].a['href']
         id_ = quasi_id.split('user=')[1]
-        return extract_coauthors(id_)
+        affiliation = soup_profili[0].findNext('div').string
+        r.zadd('queue', {id_: 3})
+        return [] # da definire
     elif len(soup_profili) == 0:
-        pass # no profiles with that name
+        return []
     else:
-        pass # many results, should ask the user
+        return [(pr.a['href'].split('user=')[1], pr.findNext('div').string) for pr in soup_profili]
