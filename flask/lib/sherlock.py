@@ -26,8 +26,8 @@ def calculate_coauthor_graph(id_):
             path = [x["name"] for x in record["path"].nodes]
             graph.append((end_node, path, distance))
         
-        r.set(id_, graph)
-        r.set("{}.expire".format(id_), datetime.today() + relativedelta(months=1))
+        r.set("{}.graph".format(id_), graph)
+        r.expire("{}.graph".format(id_), 1209600)
         return graph
 
 
@@ -43,15 +43,11 @@ def exists_author(tx, name):
     elif len(profiles) == 0:
         search(name)  # return an array of tuples with coauthors
     else:
-        coauthor_graph = r.get(profiles[0][1])
+        coauthor_graph = r.get("{}.graph".format(profiles[0][1]))
         if coauthor_graph == None:
             return calculate_coauthor_graph(profiles[0][1])
         else:
-            expiration_date = r.get("{}.expire".format(profiles[0][1]))
-            if datetime.today() < expiration_date:
-                return coauthor_graph
-            else:
-                return calculate_coauthor_graph(profiles[0][1])
+            return coauthor_graph
 
 
 def search_author(name):
