@@ -2,14 +2,18 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote 
 import redis
+from neo4j import GraphDatabase
 
+driver = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
 r = redis.Redis(host="localhost", port=6379, db=0)
 
 BASE_URL = "https://scholar.google.com"
 SEARCH_AUTHOR_URL = BASE_URL + "/scholar?hl=it&as_sdt=0%2C5&q={}&btnG="
 COATHOURS_URL = BASE_URL + "/citations?view_op=list_colleagues&hl=it&json=&user={}#t=gsc_cod_lc"
 
-
+def add_node(tx, id_, name, affiliation):
+    query_string = """MERGE (a:Person {google_id: $google_id, name: $name, affiliation: $affiliation})"""
+    tx.run(query_string, google_id=id_, name=name, affiliation=affiliation)
 
 def search(q):
     # convert spaces to %20
@@ -26,8 +30,13 @@ def search(q):
     if len(soup_profili) == 1:
         quasi_id = soup_profili[0].a['href']
         id_ = quasi_id.split('user=')[1]
+        name = soup_profili[0].a.text
         affiliation = soup_profili[0].findNext('div').string
-        r.zadd('queue', {id_: 3})
+        r.zadd('queue', {id_: 5})
+
+        with driver.session() as session:
+            session.write_transaction(add_node, id_, name, affiliation)
+            
         return [] # da definire
     elif len(soup_profili) == 0:
         return []
