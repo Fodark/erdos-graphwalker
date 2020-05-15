@@ -1,12 +1,11 @@
 from neo4j import GraphDatabase
 from .aragog import search
 import redis
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+import logging
 
 # connect to neo4j
 to_db = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='172.18.0.2', port=6379, db=0)
 
 
 def calculate_coauthor_graph(id_):
@@ -25,7 +24,7 @@ def calculate_coauthor_graph(id_):
             distance = record["distance"]
             path = [x["name"] for x in record["path"].nodes]
             graph.append((end_node, path, distance))
-        
+        logging.debug("SHERLOCK: saving graph on redis")
         r.set("{}.graph".format(id_), graph)
         r.expire("{}.graph".format(id_), 1209600)
         return graph
@@ -33,20 +32,25 @@ def calculate_coauthor_graph(id_):
 
 def exists_author(tx, name):
     profiles = tx.run(
-        "MATCH (a:Person{name:$name})return a.name as name, a.google_id as google_id, a.affiliation as affiliation", name=name)
+        "MATCH (a:Person{name:$name}) return a.name as name, a.google_id as google_id, a.affiliation as affiliation", name=name)
 
     profiles = [(p['name'], p['google_id'], p['affiliation'])
                 for p in profiles]
 
+    logging.debug("SHERLOCK: number of profiles in DB: {}".format(len(profiles)))
+
     if len(profiles) > 1:
         return profiles
     elif len(profiles) == 0:
-        search(name)  # return an array of tuples with coauthors
+        return search(name)  # return an array of tuples with coauthors
     else:
         coauthor_graph = r.get("{}.graph".format(profiles[0][1]))
+        #logging.debug("SHERLOCK: author in db, redis available? {}".format(coauthor_graph != None))
         if coauthor_graph == None:
+            logging.debug("SHERLOCK: calculating graph")
             return calculate_coauthor_graph(profiles[0][1])
         else:
+            logging.debug("SHERLOCK: graph found on redis")
             return coauthor_graph
 
 

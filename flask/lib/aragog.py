@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote 
 import redis
 from neo4j import GraphDatabase
+import logging
 
 driver = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
-r = redis.Redis(host="localhost", port=6379, db=0)
+r = redis.Redis(host="172.18.0.2", port=6379, db=0)
 
 BASE_URL = "https://scholar.google.com"
 SEARCH_AUTHOR_URL = BASE_URL + "/scholar?hl=it&as_sdt=0%2C5&q={}&btnG="
@@ -27,18 +28,22 @@ def search(q):
     # extract the profiles in the page
     soup_profili = soup_elenco_profili.find_all('h3', class_="gs_ai_name")
 
+    logging.debug("ARAGOG: profiles found: {}".format(len(soup_profili)))
+
     if len(soup_profili) == 1:
         quasi_id = soup_profili[0].a['href']
         id_ = quasi_id.split('user=')[1]
         name = soup_profili[0].a.text
         affiliation = soup_profili[0].findNext('div').string
         r.zadd('queue', {id_: 5})
+        logging.debug("ARAGOG: enqueuing: {} {}".format(id_, name))
 
         with driver.session() as session:
             session.write_transaction(add_node, id_, name, affiliation)
             
-        return [] # da definire
+        return {"status_code": 202} # da definire
     elif len(soup_profili) == 0:
-        return []
+        return {"status_code": 404}
     else:
-        return [(pr.a['href'].split('user=')[1], pr.findNext('div').string) for pr in soup_profili]
+        logging.debug("ARAGOG: multiple users found")
+        return {"status_code": 200, "data": [(pr.a['href'].split('user=')[1], pr.a.text, pr.findNext('div').string) for pr in soup_profili]}
