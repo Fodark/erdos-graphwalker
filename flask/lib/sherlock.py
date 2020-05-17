@@ -2,10 +2,11 @@ from neo4j import GraphDatabase
 from .aragog import search
 import redis
 import logging
+import json
 
 # connect to neo4j
 to_db = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
-r = redis.Redis(host='172.18.0.2', port=6379, db=0)
+r = redis.Redis(host='172.18.0.3', port=6379, db=0)
 
 
 def calculate_coauthor_graph(id_):
@@ -24,39 +25,44 @@ def calculate_coauthor_graph(id_):
             distance = record["distance"]
             path = [x["name"] for x in record["path"].nodes]
             graph.append((end_node, path, distance))
-        logging.debug("SHERLOCK: saving graph on redis")
-        r.set("{}.graph".format(id_), graph)
+        logging.info("SHERLOCK: saving graph on redis")
+        r.set("{}.graph".format(id_), json.dumps(graph))
         r.expire("{}.graph".format(id_), 1209600)
         return graph
 
 
-def exists_author(tx, name):
-    profiles = tx.run(
-        "MATCH (a:Person{name:$name}) return a.name as name, a.google_id as google_id, a.affiliation as affiliation", name=name)
+def exists_author(tx, id_):
+    #profiles = tx.run(
+    #    "MATCH (a:Person{google_id:$google_id}) return a.name as name, a.google_id as google_id, a.affiliation as affiliation", google_id=id_)
 
-    profiles = [(p['name'], p['google_id'], p['affiliation'])
-                for p in profiles]
+    #profiles = [(p['name'], p['google_id'], p['affiliation'])
+    #            for p in profiles]
+    exists = r.exists(id_)
+    logging.info("SHERLOCK: number of profiles in DB: {}".format(exists))
 
-    logging.debug("SHERLOCK: number of profiles in DB: {}".format(len(profiles)))
-
-    if len(profiles) > 1:
-        return profiles
-    elif len(profiles) == 0:
-        return search(name)  # return an array of tuples with coauthors
+    if exists == None:
+        r.zadd('queue', {id_: 5})
+        return {"status_code": 202}
     else:
-        coauthor_graph = r.get("{}.graph".format(profiles[0][1]))
-        #logging.debug("SHERLOCK: author in db, redis available? {}".format(coauthor_graph != None))
+        coauthor_graph = r.get("{}.graph".format(id_))
+        #logging.info("SHERLOCK: author in db, redis available? {}".format(coauthor_graph != None))
         if coauthor_graph == None:
-            logging.debug("SHERLOCK: calculating graph")
-            return calculate_coauthor_graph(profiles[0][1])
+            logging.info("SHERLOCK: calculating graph")
+            return {"status_code": 200, "data": calculate_coauthor_graph(id_)}
         else:
-            logging.debug("SHERLOCK: graph found on redis")
-            return coauthor_graph
+            logging.info("SHERLOCK: graph found on redis")
+            return {"status_code": 200, "data": json.loads(coauthor_graph)}
 
 
 def search_author(name):
     # query
-    with to_db.session() as session:
-        person_name = session.read_transaction(exists_author, name)
+    return search(name)
+    #with to_db.session() as session:
+    #    person_name = session.read_transaction(exists_author, name)
+#
+    #return [person_name]
 
-    return [person_name]
+def search_author_by_id(author_id):
+    with to_db.session() as session:
+        result = session.read_transaction(exists_author, author_id)
+        return result
