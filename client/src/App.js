@@ -1,26 +1,72 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Paper, Typography, Grid, TextField, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import SearchIcon from '@material-ui/icons/Search';
 
-function App() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    minHeight: '100vh',
+    textAlign: "center",
+    padding: theme.spacing(1),
+  },
+  title: {
+    margin: theme.spacing(2),
+  },
+  searchBox: {
+    width: "50%",
+    margin: theme.spacing(1),
+  },
+  distance: {
+    width: "10%",
+    margin: theme.spacing(1),
+  },
+  button: {
+    margin: theme.spacing(1),
+  }
+}));
+
+const App = () => {
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <Paper style={{ minHeight: "100vh" }}>
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justify="center"
+        className={classes.root}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h2" className={classes.title}>Nena Graphwalker</Typography>
+          <TextField id="outlined-search" label="Enter your query" type="search" variant="outlined" className={classes.searchBox} />
+          <TextField
+            id="standard-number"
+            label="Max distance"
+            type="number"
+            variant="outlined"
+            defaultValue={5}
+            className={classes.distance}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              className={classes.button}
+              endIcon={<SearchIcon />}
+            >
+              Search
+            </Button>
+          </div>
+        </Grid>
+      </Grid>;
+    </Paper>
+  )
+};
 
 export default App;
