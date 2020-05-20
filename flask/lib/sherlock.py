@@ -5,8 +5,8 @@ import logging
 import json
 
 # connect to neo4j
-to_db = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
-r = redis.Redis(host='172.18.0.3', port=6379, db=0)
+to_db = GraphDatabase.driver('bolt://neo:7687/', auth=('neo4j', 'test'))
+r = redis.Redis(host='redis', port=6379, db=0)
 
 
 def calculate_coauthor_graph(id_):

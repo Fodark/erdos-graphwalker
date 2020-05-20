@@ -5,11 +5,12 @@ import redis
 from neo4j import GraphDatabase
 import logging
 
-driver = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
-r = redis.Redis(host="172.18.0.3", port=6379, db=0)
+driver = GraphDatabase.driver('bolt://neo:7687/', auth=('neo4j', 'test'))
+r = redis.Redis(host="redis", port=6379, db=0)
 
 BASE_URL = "https://scholar.google.com"
 SEARCH_AUTHOR_URL = BASE_URL + "/scholar?hl=it&as_sdt=0%2C5&q={}&btnG="
+AUTHORS_PAGE_URL = BASE_URL + "/citations?view_op=search_authors&mauthors={}&hl=it&oi=ao"
 COATHOURS_URL = BASE_URL + "/citations?view_op=list_colleagues&hl=it&json=&user={}#t=gsc_cod_lc"
 
 def add_node(tx, id_, name, affiliation):
@@ -19,11 +20,11 @@ def add_node(tx, id_, name, affiliation):
 def search(q):
     # convert spaces to %20
     q = quote(q)
-    page = requests.get(SEARCH_AUTHOR_URL.format(q))
-    soup = BeautifulSoup(page.content, 'html.parser')
-    profili_utente_per = soup.find_all('h3', class_="gs_rt")
+    #page = requests.get(SEARCH_AUTHOR_URL.format(q))
+    #soup = BeautifulSoup(page.content, 'html.parser')
+    #profili_utente_per = soup.find_all('h3', class_="gs_rt")
     # extract profiles page matching the given query
-    page_elenco_profili = requests.get(BASE_URL + profili_utente_per[0].a['href'])
+    page_elenco_profili = requests.get(AUTHORS_PAGE_URL.format(q))
     soup_elenco_profili = BeautifulSoup(page_elenco_profili.content, 'html.parser')
     # extract the profiles in the page
     soup_profili = soup_elenco_profili.find_all('h3', class_="gs_ai_name")
