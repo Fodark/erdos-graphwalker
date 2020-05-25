@@ -6,8 +6,11 @@ dependencies:
   '@testing-library/user-event': 7.2.1
   react: 16.13.1
   react-dom: 16.13.1_react@16.13.1
+  react-graph-vis: 1.0.5_react@16.13.1
   react-router-dom: 5.2.0_react@16.13.1
   react-scripts: 3.4.1
+  react-sigma: 1.2.34_react-dom@16.13.1+react@16.13.1
+  vis-react: 0.5.1_react@16.13.1
 lockfileVersion: 5.1
 packages:
   /@babel/code-frame/7.8.3:
@@ -1159,6 +1162,14 @@ packages:
     dev: false
     resolution:
       integrity: sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
+  /@egjs/hammerjs/2.0.17:
+    dependencies:
+      '@types/hammerjs': 2.0.36
+    dev: false
+    engines:
+      node: '>=0.8.0'
+    resolution:
+      integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==
   /@emotion/hash/0.8.0:
     dev: false
     resolution:
@@ -1733,6 +1744,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
+  /@types/hammerjs/2.0.36:
+    dev: false
+    resolution:
+      integrity: sha512-7TUK/k2/QGpEAv/BCwSHlYu3NXZhQ9ZwBYpzr9tjlPIL2C5BeGhH3DmVavRx3ZNyELX5TLC91JTz/cen6AAtIQ==
   /@types/istanbul-lib-coverage/2.0.1:
     dev: false
     resolution:
@@ -6878,6 +6893,10 @@ packages:
       node: '>=4.0'
     resolution:
       integrity: sha512-EdIHFMm+1BPynpKOpdPqiOsvnIrInRGJD7bzPZdPkjitQEqpdpUuFpq4T0npZFKTiB3RhWFdGN+oqOJIdhDhQA==
+  /keycharm/0.2.0:
+    dev: false
+    resolution:
+      integrity: sha1-+m6i5DuQpoAohD0n8gddNajD5vk=
   /killable/1.0.1:
     dev: false
     resolution:
@@ -7439,6 +7458,14 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
+  /moment/2.24.0:
+    dev: false
+    resolution:
+      integrity: sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+  /moment/2.26.0:
+    dev: false
+    resolution:
+      integrity: sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
   /move-concurrently/1.0.1:
     dependencies:
       aproba: 1.2.0
@@ -9323,6 +9350,18 @@ packages:
     dev: false
     resolution:
       integrity: sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
+  /react-graph-vis/1.0.5_react@16.13.1:
+    dependencies:
+      lodash: 4.17.15
+      prop-types: 15.7.2
+      react: 16.13.1
+      uuid: 2.0.3
+      vis-network: 5.4.1_uuid@2.0.3
+    dev: false
+    peerDependencies:
+      react: '*'
+    resolution:
+      integrity: sha512-y7+eHcwj7GryRoY+ZawwsDmS8OMeJ8Gpzmzejqwz+T2qg6IYTk1bod42H5g3J2zzHcPaqAZpwxZG3d3YB4nBwQ==
   /react-is/16.13.1:
     dev: false
     resolution:
@@ -9427,6 +9466,18 @@ packages:
         optional: true
     resolution:
       integrity: sha512-JpTdi/0Sfd31mZA6Ukx+lq5j1JoKItX7qqEK4OiACjVQletM1P38g49d9/D0yTxp9FrSF+xpJFStkGgKEIRjlQ==
+  /react-sigma/1.2.34_react-dom@16.13.1+react@16.13.1:
+    dependencies:
+      react: 16.13.1
+      react-dom: 16.13.1_react@16.13.1
+    dev: false
+    engines:
+      node: '>=8.0'
+    peerDependencies:
+      react: '>=15.3'
+      react-dom: '>=15.3'
+    resolution:
+      integrity: sha512-GYyZptmLLR+Q9AqjC8cKo6xxoyrhXz1dCrhYHRP26xZQA0oAkiNrWA4g8X7VsGn1uanqmrmR5IaLM20FZrObKA==
   /react-transition-group/4.3.0_react-dom@16.13.1+react@16.13.1:
     dependencies:
       '@babel/runtime': 7.9.2
@@ -11183,11 +11234,20 @@ packages:
       node: '>= 0.4.0'
     resolution:
       integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
+  /uuid/2.0.3:
+    dev: false
+    resolution:
+      integrity: sha1-Z+LoY3lyFVMN/zGOW/nc6/1Hsho=
   /uuid/3.4.0:
     dev: false
     hasBin: true
     resolution:
       integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+  /uuid/7.0.3:
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
   /v8-compile-cache/2.1.0:
     dev: false
     resolution:
@@ -11223,6 +11283,65 @@ packages:
       '0': node >=0.6.0
     resolution:
       integrity: sha1-OhBcoXBTr1XW4nDB+CiGguGNpAA=
+  /vis-data/6.5.3_c776d1d10c0baa018697659d1f3e14a6:
+    dependencies:
+      moment: 2.26.0
+      uuid: 2.0.3
+      vis-util: 1.1.10
+    dev: false
+    peerDependencies:
+      moment: ^2.24.0
+      uuid: ^7.0.0 || ^8.0.0
+      vis-util: ^4.0.0
+    requiresBuild: true
+    resolution:
+      integrity: sha512-y7NlLWKnzEfVVUT6LYZrTbZGrFummHlHlRa/cv8OWL5O52fi9l0qUsHk/VhBkEEuoQRR+u6ZMyriFauvXXtSKQ==
+  /vis-network/5.4.1_uuid@2.0.3:
+    dependencies:
+      '@egjs/hammerjs': 2.0.17
+      component-emitter: 1.3.0
+      keycharm: 0.2.0
+      moment: 2.26.0
+      timsort: 0.3.0
+      vis-data: 6.5.3_c776d1d10c0baa018697659d1f3e14a6
+      vis-util: 1.1.10
+    dev: false
+    peerDependencies:
+      uuid: '*'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-hUJlFWoCmLup6IxoXCr//OO2ZCkC8jrXEkkHLG1DhBgB54Y3K33+e5q4tc436inMlGzfqqaKTIToNbOGr8Szww==
+  /vis-react-core/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-K5bJNbd04cOapL2oqTP7AgxLajaaXH9r7z5CsO/uFccbeidzfcX7ZZeV4yXuGMRB70uXGScMa/ZrC3L3+u+i7Q==
+  /vis-react/0.5.1_react@16.13.1:
+    dependencies:
+      lodash: 4.17.15
+      react: 16.13.1
+      uuid: 7.0.3
+      vis-react-core: 1.0.0
+    dev: false
+    peerDependencies:
+      react: ^16.13.0
+    resolution:
+      integrity: sha512-jXwTM7mbGpTohOiiKAYXPXyEEvm6X0oE7hdV0aKnZEmqnSMbsAI1AxQbyZdP7iPrmn0D/RbeotTh05614XjI9w==
+  /vis-util/1.1.10:
+    dependencies:
+      moment: 2.24.0
+      vis-uuid: 1.1.3
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-8hGSxsFi2ogYYweClQyITzWnirWgQ8p0i9M4d3OXMuUO8vjXrf+2zHOYI9OZbtUduxAWuMEePnS9BXDtPJmJ7Q==
+  /vis-uuid/1.1.3:
+    deprecated: We don't use this library anymore so you shouldn't either. Use e.g. 'uuid' instead!
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-2B6XdY1bkzbUh+TugmnAaFa61KO9R5pzBzIuFIm8a9FrkbxIdSmQXV+FbfkL8QunkQV/bT0JDLQ2puqCS2+0Og==
   /vm-browserify/1.1.2:
     dev: false
     resolution:
@@ -11750,5 +11869,8 @@ specifiers:
   '@testing-library/user-event': ^7.1.2
   react: ^16.13.1
   react-dom: ^16.13.1
+  react-graph-vis: ^1.0.5
   react-router-dom: ^5.2.0
   react-scripts: 3.4.1
+  react-sigma: ^1.2.34
+  vis-react: ^0.5.1

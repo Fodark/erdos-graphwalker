@@ -12,7 +12,7 @@ r = redis.Redis(host='redis', port=6379, db=0)
 def calculate_coauthor_graph(id_):
     query_string = """MATCH (a:Person {google_id: $google_id}) 
                     WITH a 
-                    MATCH path=(a)-[:COAUTHOR*1..5]-(b:Person) 
+                    MATCH path=(a)-[:COAUTHOR*0..5]-(b:Person) 
                     WITH b, path 
                     ORDER BY LENGTH(path) ASC 
                     RETURN b, HEAD(COLLECT(path)) AS path, LENGTH(path) AS distance  
@@ -20,11 +20,24 @@ def calculate_coauthor_graph(id_):
     with to_db.session() as session:
         results = session.run(query_string, google_id=id_)
         graph = []
+        end_nodes = []
         for record in results:
-            end_node = record["path"].end_node["name"]
-            distance = record["distance"]
-            path = [x["name"] for x in record["path"].nodes]
-            graph.append((end_node, path, distance))
+            end_node_id = record["path"].end_node["google_id"]
+            if not end_node_id in end_nodes:
+                end_nodes.append(end_node_id)
+                end_node_name = record["path"].end_node["name"]
+                distance = record["distance"]
+                print(distance)
+                print(type(distance))
+                path = [x["google_id"] for x in record["path"].nodes]
+                tmp = {
+                    "end_node_id": end_node_id,
+                    "end_node_name": end_node_name,
+                    "path": path,
+                    "distance": distance
+                }
+                graph.append(tmp)
+                #graph.append((end_node_name, path, distance))
         logging.info("SHERLOCK: saving graph on redis")
         r.set("{}.graph".format(id_), json.dumps(graph))
         r.expire("{}.graph".format(id_), 1209600)
