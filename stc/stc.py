@@ -6,14 +6,14 @@ from neo4j import GraphDatabase
 import time
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-driver = GraphDatabase.driver('bolt://localhost:7687/', auth=('neo4j', 'test'))
+driver = GraphDatabase.driver('bolt://neo:7687/', auth=('neo4j', 'test'))
 
 BASE_URL = "https://scholar.google.com"
 COATHOURS_URL = BASE_URL + "/citations?view_op=list_colleagues&hl=it&json=&user={}#t=gsc_cod_lc"
 
-r = redis.Redis(host="172.18.0.3", port=6379, db=0)
+r = redis.Redis(host="redis", port=6379, db=0)
 
 def add_coauthorship(tx, id_1, id_2, name, affiliation):
     query_string = """MATCH(a:Person {google_id: $id_1}) MERGE(b:Person {google_id: $id_2, name: $name, affiliation: $affiliation}) MERGE(a)-[:COAUTHOR]->(b)"""
