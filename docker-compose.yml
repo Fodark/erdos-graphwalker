@@ -49,6 +49,12 @@ services:
     networks: [bdt]
     volumes:
       - "./redis-data:/data"
-
+  
+  ltc:
+    build:
+      context: ./ltc
+      dockerfile: Dockerfile
+    hostname: ltc
+    networks: [bdt]
 networks: 
   bdt:
