@@ -90,7 +90,7 @@ def analyze(author, paper):
 
     # check if the author has the required publication
     # if not, skip him/her
-    if not paper in publications_titles:
+    if paper != "0" and not paper in publications_titles:
       logging.info("{} does not have the publication".format(google_id))
       driver.back()
       profiles = driver.find_elements_by_xpath("/html/body/div/div[8]/div[2]/div/div/div/div/h3/a")

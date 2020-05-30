@@ -102,7 +102,7 @@ def calculate_coauthor_graph(id_, is_google_id):
         return graph
 
 
-def exists_author(tx, google_id, node_id):
+def exists_author(tx, google_id, node_id, name):
     # google id and node id behaves differently
     # for g_id, it is needed to check its existence
     if google_id is not None:
@@ -112,6 +112,7 @@ def exists_author(tx, google_id, node_id):
         # we have not short-term analyzed the person, enqueue with max priority
         if not exists:
             r.zadd('queue', {google_id: 5})
+            r.rpush('ltc', name, "0")
             return {"status_code": 202, "data": []}
         else:
             # check if we have a cached version of the graph
@@ -136,10 +137,10 @@ def exists_author(tx, google_id, node_id):
 def search_author(name):
     return search(name)
 
-def search_author_by_id(author_id, node_id):
+def search_author_by_id(author_id, node_id, name):
     logging.info(author_id)
     logging.info(node_id)
     with to_db.session() as session:
         # check the existance of the author
-        result = session.read_transaction(exists_author, author_id, node_id)
+        result = session.read_transaction(exists_author, author_id, node_id, name)
         return result

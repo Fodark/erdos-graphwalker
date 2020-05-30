@@ -32,9 +32,10 @@ def link():
 def get_author_by_id():
     id_cercato = request.args.get('id')
     node_id = request.args.get('node_id')
+    name = request.args.get('name')
     logging.info("APP: Searched GID: {}".format(id_cercato))
     logging.info("APP: Searched ID: {}".format(node_id))
-    result = search_author_by_id(id_cercato, node_id)
+    result = search_author_by_id(id_cercato, node_id. name)
     return jsonify(result), result['status_code']
 
 

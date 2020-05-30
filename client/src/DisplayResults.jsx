@@ -5,6 +5,9 @@ import {Sigma, RandomizeNodePositions, RelativeSize} from 'react-sigma';
 const DisplayResults = (props) => {
   const id = props.match.params.id;
   const isGoogle = !parseInt(id)
+  const queryString = require('query-string');
+  const parsed = queryString.parse(this.props.location.search);
+  const name = parsed.name;
   const [status, setStatus] = useState(0);
   const [graph, setGraph] = useState({});
   const [rows, setRows] = useState([]);
@@ -13,7 +16,7 @@ const DisplayResults = (props) => {
     const fetchData = async () => {
       let response
       if(isGoogle)
-        response = await fetch(`/author?id=${id}`);
+        response = await fetch(`/author?id=${id}&name=${name}`);
       else 
         response = await fetch(`/author?node_id=${id}`);
       const body = await response.json();

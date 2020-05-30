@@ -89,7 +89,7 @@ const ListResults = (props) => {
   }, data);
 
   const generateListItem = (id, name, affiliation, avatarUrl) => (
-    <Link href={`/author/${id}`} key={id}>
+    <Link href={`/author/${id}?name=${name}`} key={id}>
       <ListItem>
         <ListItemAvatar>
           <Avatar className={classes.avatar} src={avatarUrl} />
