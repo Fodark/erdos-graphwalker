@@ -1,6 +1,5 @@
-FROM joyzoursky/python-chromedriver:3.8-selenium
-WORKDIR /var/app
-ADD . /var/app
+FROM joyzoursky/python-chromedriver:3.8-alpine3.10-selenium
+WORKDIR /app
+ADD . /app
 RUN pip install --no-cache-dir -r requirements.txt
-RUN printf "search 192.168.1.144\nnameserver 8.8.8.8\noptions ndots:0" > /etc/resolv.conf 
-CMD python ltc.py
+CMD "./wait-for" "neo:7474" "--" "python" "ltc.py"

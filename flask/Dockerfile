@@ -4,4 +4,4 @@ WORKDIR /usr/src/app
 COPY requirements.txt /usr/src/app
 RUN pip install --no-cache-dir -r requirements.txt
 ENV FLASK_APP=app.py
-CMD flask run -h 0.0.0.0 -p 5000
+CMD ./wait-for neo:7474 -- flask run -h 0.0.0.0 -p 5000
