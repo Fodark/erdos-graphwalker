@@ -10,12 +10,20 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     padding: theme.spacing(1),
   },
+  paper: {
+    minHeight: "100vh",
+    backgroundImage: `url(${"/images/background_3.png"})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover'
+  },
   title: {
     margin: theme.spacing(2),
+    color: '#FFF'
   },
   searchBox: {
     width: "50%",
     margin: theme.spacing(1),
+    backgroundColor: "#FFF"
   },
   distance: {
     width: "10%",
@@ -32,7 +40,7 @@ const SearchPage = () => {
   const [d, setD] = useState(5);
 
   return (
-    <Paper style={{ minHeight: "100vh" }}>
+    <Paper className={classes.paper}>
       <Grid
         container
         spacing={0}
@@ -41,7 +49,8 @@ const SearchPage = () => {
         className={classes.root}
       >
         <Grid item xs={12}>
-          <Typography variant="h2" className={classes.title}>Nena Graphwalker</Typography>
+          <Typography variant="h2" className={classes.title}>Erdős Graphwalker</Typography>
+          <Typography variant="h5" className={classes.title}>Construct coauthorship graph and calculate distance between its nodes based on Erdős number</Typography>
           <TextField 
             id="outlined-search" 
             label="Enter your query" 
@@ -51,25 +60,13 @@ const SearchPage = () => {
             variant="outlined" 
             className={classes.searchBox} 
           />
-          <TextField
-            id="standard-number"
-            label="Max distance"
-            type="number"
-            variant="outlined"
-            value={d}
-            onChange={(e) => {setD( parseInt(e.target.value))}}
-            className={classes.distance}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
           <div>
             <Button
               variant="contained"
               color="primary"
               size="large"
               className={classes.button}
-              href={`/search/${encodeURI(q)}?d=${d}`}
+              href={`/search/${encodeURI(q)}`}
               endIcon={<SearchIcon />}
             >
               Search

@@ -10,15 +10,22 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100vh',
     textAlign: "center",
     padding: theme.spacing(1),
+    "-webkit-filter": "blur(0px)",
+    "-moz-filter": "blur(0px)",
+    "-o-filter": "blur(0px)",
+    "-ms-filter": "blur(0px)",
+    "filter": "blur(0px)"
   },
   title: {
     margin: theme.spacing(2),
     fontWeight: "normal",
-    display: "inline"
+    display: "inline",
+    color: "#FFF"
   },
   name: {
     fontWeight: "bold",
-    display: "inline"
+    display: "inline",
+    color: "#FFF"
   },
   searchBox: {
     width: "50%",
@@ -35,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
   },
   listText: {
+    color: "#29a329",
     fontSize: 28,
   },
   subListText: {
@@ -45,15 +53,22 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(10),
     height: theme.spacing(10),
     marginRight: theme.spacing(3),
+  },
+  paper: {
+    minHeight: "100vh", 
+    textAlign: "center",
+    backgroundImage: `url(${"/images/background_4.png"})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
   }
 }));
 
 const ListResults = (props) => {
   const classes = useStyles();
   const [data, setData] = useState([]);
+  const [neoData, setNeoData] = useState([]);
   const [status, setStatus] = useState(0);
   const name = props.match.params.name
-  const distance = props.location.search.split('=')[1]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,11 +78,12 @@ const ListResults = (props) => {
         }});
       setStatus(res.status);
       const body = await res.json();
-      console.log(body.data);
+      //console.log(body.data);
       setData(body.data);
+      setNeoData(body.neo_data)
     };
 
-    if(status == 0) {
+    if(status === 0) {
       fetchData()
     }
   }, data);
@@ -87,14 +103,17 @@ const ListResults = (props) => {
   );
 
   return (
-    <Paper style={{minHeight: "100vh", textAlign: "center"}}>
+    <Paper className={classes.paper}>
       <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>Results for</Typography>
       <Typography variant="h3" className={classes.name}>{name}</Typography>
       <List className={classes.list}>
         {status ? data.map(p => (
-          generateListItem(p[0], p[1], p[2], "https://www.kirkleescollege.ac.uk/wp-content/uploads/2015/09/default-avatar.png")
+          generateListItem(p.google_id, p.name, p.affiliation, "https://www.kirkleescollege.ac.uk/wp-content/uploads/2015/09/default-avatar.png")
         )) : <CircularProgress />}
+        {status === 200 ? neoData.map(p => (
+          generateListItem(p.node_id, p.name, "Not on Google Scholar", "https://www.kirkleescollege.ac.uk/wp-content/uploads/2015/09/default-avatar.png")
+        )) : status === 404 ? <Typography variant="h3">No profiles found on Google Scholar or our database</Typography> : null}
       </List>
       </div>
     </Paper>
