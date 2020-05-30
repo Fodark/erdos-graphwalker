@@ -31,9 +31,11 @@ def link():
 @cross_origin()
 def get_author_by_id():
     id_cercato = request.args.get('id')
-    logging.info("APP: Searched ID: {}".format(id_cercato))
-    result = search_author_by_id(id_cercato)
-    return jsonify(result)
+    node_id = request.args.get('node_id')
+    logging.info("APP: Searched GID: {}".format(id_cercato))
+    logging.info("APP: Searched ID: {}".format(node_id))
+    result = search_author_by_id(id_cercato, node_id)
+    return jsonify(result), result['status_code']
 
 
 

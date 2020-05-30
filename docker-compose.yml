@@ -11,7 +11,6 @@ services:
     environment: 
       NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
       NEO4J_AUTH: "neo4j/test"
-      NEO4JLABS_PLUGINS: "[\"apoc\"]"
     volumes:
       - "./neo4j/data:/data"
       - "./neo4j/conf:/conf"
@@ -29,6 +28,9 @@ services:
     volumes:
       - "./flask:/usr/src/app"
     networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
   
   react:
     build:
@@ -41,6 +43,8 @@ services:
       - "./client:/app"
       - "./client/app/node_modules"
     stdin_open: true
+    depends_on: 
+      - flask
   
   redis:
     image: redis
@@ -56,6 +60,9 @@ services:
       dockerfile: Dockerfile
     hostname: ltc
     networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
   
   stc:
     build:
@@ -63,6 +70,9 @@ services:
       dockerfile: Dockerfile
     hostname: stc
     networks: [bdt]
-    
+    depends_on: 
+      - neo
+      - redis
+
 networks: 
   bdt:
