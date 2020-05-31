@@ -114,7 +114,8 @@ def exists_author(tx, google_id, node_id, name):
             logging.info(f"SHERLOCK: enqueuing {google_id} for stc")
             logging.info(f"SHERLOCK: enqueuing {name} for ltc")
             r.zadd('queue', {google_id: 5})
-            r.rpush('ltc', name, "0")
+            key = json.dumps([name, "0"])
+            r.zadd('ltc', {key: 5})
             return {"status_code": 202, "data": []}
         else:
             # check if we have a cached version of the graph

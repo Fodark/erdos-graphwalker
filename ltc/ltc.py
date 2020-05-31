@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -34,7 +35,7 @@ def add_authorship_relation(tx, google_id, name, paper_name):
     tx.run(query, title=paper_name, name=name)
 
 
-def analyze(author, paper):
+def analyze(author, paper, value):
   # open a new chrome instance
   driver = webdriver.Chrome(options=chrome_options)
   driver.set_window_size(960, 1080)
@@ -124,7 +125,8 @@ def analyze(author, paper):
         for au in authors:
           if au != author:
             logging.info("\t\tLTC: adding author to analyze {} {}".format(au, title))
-            r.rpush('ltc', au, title)
+            key = json.dumps([au, title])
+            r.zadd('ltc', {key: max(1, value - 1)})
         sleep(1)
         # close the publication and go to the next one
         close_button = driver.find_element_by_id('gs_md_cita-d-x')
@@ -146,15 +148,16 @@ def analyze(author, paper):
 while True:
   try:
     # extract from the queue the pair (author, paper name)
-    [author, paper] = r.lrange("ltc", 0, 1)
+    _, key, value = r.bzpopmax('ltc', 5)
+    [author, paper] = json.loads(key)
     # remove them from the queue
-    r.ltrim('ltc', 2, -1)
+    #r.ltrim('ltc', 2, -1)
     # redis stores bytes, convert them to string
     author = author.decode('UTF-8') if not isinstance(author, str) else author
     paper = paper.decode('UTF-8') if not isinstance(paper, str) else paper
     logging.info("LTC: analyzing {} {}".format(author, paper))
     # start analysis
-    analyze(author, paper)
+    analyze(author, paper, value)
   except Exception as e:
     # the queue was empty, wait and repeat
     sleep(3)
