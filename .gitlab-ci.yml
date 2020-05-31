@@ -1,0 +1,39 @@
+image:
+  name: docker/compose:latest
+  entrypoint: ["/bin/sh", "-c"]
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  FLASK_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_flask:latest
+  REACT_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_react:latest
+  REDIS_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_redis:latest
+  NEO_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_neo:latest
+  LTC_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_ltc:latest
+  STC_IMAGE: registry.gitlab.com/fodark/bdt_pub_prova/bdt_pub_prova_stc:latest
+
+services:
+  - docker:dind
+
+stages:
+- build_images
+- tag_images
+- push_images
+
+before_script:
+  - docker version
+  - docker-compose version
+  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+build:
+  stage: build_images
+  script:
+    - docker-compose build
+    - docker tag bdt_pub_prova_flask $FLASK_IMAGE
+    - docker tag bdt_pub_prova_react $REACT_IMAGE
+    - docker tag bdt_pub_prova_ltc $LTC_IMAGE
+    - docker tag bdt_pub_prova_stc $STC_IMAGE
+    - docker push $FLASK_IMAGE
+    - docker push $REACT_IMAGE
+    - docker push $LTC_IMAGE
+    - docker push $STC_IMAGE
