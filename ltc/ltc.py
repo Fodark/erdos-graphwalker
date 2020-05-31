@@ -124,7 +124,7 @@ def analyze(author, paper):
         for au in authors:
           if au != author:
             logging.info("\t\tLTC: adding author to analyze {} {}".format(au, title))
-            r.rpush('lts', au, title)
+            r.rpush('ltc', au, title)
         sleep(1)
         # close the publication and go to the next one
         close_button = driver.find_element_by_id('gs_md_cita-d-x')
@@ -146,9 +146,9 @@ def analyze(author, paper):
 while True:
   try:
     # extract from the queue the pair (author, paper name)
-    [author, paper] = r.lrange("lts", 0, 1)
+    [author, paper] = r.lrange("ltc", 0, 1)
     # remove them from the queue
-    r.ltrim('lts', 2, -1)
+    r.ltrim('ltc', 2, -1)
     # redis stores bytes, convert them to string
     author = author.decode('UTF-8') if not isinstance(author, str) else author
     paper = paper.decode('UTF-8') if not isinstance(paper, str) else paper
