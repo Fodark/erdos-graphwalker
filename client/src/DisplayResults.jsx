@@ -6,7 +6,7 @@ const DisplayResults = (props) => {
   const id = props.match.params.id;
   const isGoogle = !parseInt(id)
   const queryString = require('query-string');
-  const parsed = queryString.parse(this.props.location.search);
+  const parsed = queryString.parse(props.location.search);
   const name = parsed.name;
   const [status, setStatus] = useState(0);
   const [graph, setGraph] = useState({});

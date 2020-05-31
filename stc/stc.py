@@ -49,10 +49,13 @@ def extract_coauthors(id_, value):
 
 
 while True:
-    _, id_, value = r.bzpopmax('queue', 5) # Blocking Extraction of Max Value from queue (program blocks for 5 seconds if the queue is empty)
-    # underscore significa che ignoriamo il primo valore restituito da redis (nome della coda)
-    id_ = id_.decode('UTF-8') # passiamo da lista di bytes a stringa
-    logging.info("CONSUMER: analyzing {} w/ priority {}".format(id_, value))
-    if not r.get(id_):
-      time.sleep(.5)
-      extract_coauthors(id_, value)
+    try:
+        _, id_, value = r.bzpopmax('queue', 5) # Blocking Extraction of Max Value from queue (program blocks for 5 seconds if the queue is empty)
+        # underscore significa che ignoriamo il primo valore restituito da redis (nome della coda)
+        id_ = id_.decode('UTF-8') # passiamo da lista di bytes a stringa
+        logging.info("CONSUMER: analyzing {} w/ priority {}".format(id_, value))
+        if not r.get(id_):
+            time.sleep(.5)
+            extract_coauthors(id_, value)
+    except:
+        pass 
