@@ -4,7 +4,7 @@ import {Sigma, RandomizeNodePositions, RelativeSize} from 'react-sigma';
 
 const DisplayResults = (props) => {
   const id = props.match.params.id;
-  const isGoogle = !parseInt(id)
+  const isGoogle = !/^\d+$/.test(id);
   const queryString = require('query-string');
   const parsed = queryString.parse(props.location.search);
   const name = parsed.name;

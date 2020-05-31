@@ -111,6 +111,8 @@ def exists_author(tx, google_id, node_id, name):
 
         # we have not short-term analyzed the person, enqueue with max priority
         if not exists:
+            logging.info(f"SHERLOCK: enqueuing {google_id} for stc")
+            logging.info(f"SHERLOCK: enqueuing {name} for ltc")
             r.zadd('queue', {google_id: 5})
             r.rpush('ltc', name, "0")
             return {"status_code": 202, "data": []}
