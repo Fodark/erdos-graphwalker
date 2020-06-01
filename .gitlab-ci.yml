@@ -27,7 +27,7 @@ before_script:
 build:
   stage: build_images
   script:
-    - docker-compose build
+    - docker-compose -f docker-compose-build.yml build
     - docker tag bdt-project_flask $FLASK_IMAGE
     - docker tag bdt-project_react $REACT_IMAGE
     - docker tag bdt-project_ltc $LTC_IMAGE
