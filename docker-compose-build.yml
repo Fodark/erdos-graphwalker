@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  neo:
+    build: 
+      context: ./neo4j
+      dockerfile: Dockerfile
+    ports: 
+      - 7474:7474
+      - 7687:7687
+    expose: 
+      - 7474
+    environment: 
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: "neo4j/test"
+    volumes:
+      - "./neo4j/data:/data"
+      #- "./neo4j/conf:/conf"
+      - "./neo4j/plugins:/plugins"
+      - "./neo4j/import:/import"
+      - "./neo4j/logs:/logs"
+    networks: [bdt]
+  
+  flask:
+    build: 
+      context: ./flask
+      dockerfile: Dockerfile
+    ports: 
+      - 5000:5000
+    volumes:
+      - "./flask:/usr/src/app"
+    networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
+  
+  react:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports: 
+      - 80:3000
+    networks: [bdt]
+    volumes: 
+      - "./client:/app"
+      - "./client/app/node_modules"
+    stdin_open: true
+    depends_on: 
+      - flask
+  
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    networks: [bdt]
+    volumes:
+      - "./redis-data:/data"
+  
+  ltc:
+    build:
+      context: ./ltc
+      dockerfile: Dockerfile
+    hostname: ltc
+    networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
+  
+  stc:
+    build:
+      context: ./stc
+      dockerfile: Dockerfile
+    hostname: stc
+    networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
+
+networks: 
+  bdt:
