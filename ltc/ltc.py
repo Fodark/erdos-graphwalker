@@ -16,6 +16,9 @@ logging.basicConfig(level=logging.INFO)
 neo_driver = GraphDatabase.driver('bolt://neo:7687/', auth=('neo4j', 'test'))
 r = redis.Redis(host="redis", port=6379, db=0)
 
+BASE_URL = "https://scholar.google.com"
+AUTHORS_PAGE_URL = BASE_URL + "/citations?view_op=search_authors&mauthors={}&hl=it&oi=ao"
+
 # initialize selenium options to run chrome in headless mode
 chrome_options = Options()
 chrome_options.add_argument("--headless")
@@ -43,34 +46,35 @@ def analyze(author, paper, value):
   driver.set_window_size(960, 1080)
   driver.implicitly_wait(4)
   # connect to gscholar
-  driver.get("https://scholar.google.com/")
-  sleep(1)
+  #driver.get("https://scholar.google.com/")
+  #sleep(1)
   # find the text field in the page
-  elem = driver.find_element_by_name("q")
-  elem.clear()
+  #elem = driver.find_element_by_name("q")
+  #elem.clear()
   # send the author name
-  elem.send_keys(author)
-  elem.send_keys(Keys.RETURN)
-  logging.info("LTC: query sent")
+  #elem.send_keys(author)
+  #elem.send_keys(Keys.RETURN)
+  #logging.info("LTC: query sent")
   # try to find the "profiles for" link in the page, if none it means no author with that name exist on gscholar
-  try:
-    element_present = EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, author))
-    WebDriverWait(driver, 5).until(element_present)
-    elem = driver.find_element_by_partial_link_text(author)
-  except Exception as e:
-    logging.info(e)
-    logging.info("LTC: No gscholars")
-    with neo_driver.session() as session:
-      session.write_transaction(add_authorship_relation, None, author, paper)
-    return
+  #try:
+  #  element_present = EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, author))
+  #  WebDriverWait(driver, 5).until(element_present)
+  #  elem = driver.find_element_by_partial_link_text(author)
+  #except Exception as e:
+  #  logging.info(e)
+  #  logging.info("LTC: No gscholars")
+  #  with neo_driver.session() as session:
+  #    session.write_transaction(add_authorship_relation, None, author, paper)
+  #  return
   
-  elem.click()
+  #elem.click()
   logging.info("LTC: entering profile page")
-  sleep(1)
+  #sleep(1)
+  driver.get(AUTHORS_PAGE_URL.format(author))
   # extract the profiles links
   profiles = driver.find_elements_by_xpath("/html/body/div/div[8]/div[2]/div/div/div/div/h3/a")
   n_profiles = len(profiles)
-  logging.info(f"LTC: profs found: {n_profiles}")
+  logging.info(f"LTC: profiles found: {n_profiles}")
 
   # iterate over every profile
   found = False
@@ -79,7 +83,7 @@ def analyze(author, paper, value):
     em = profiles[i]
     # enter the profile page
     em.click()
-    sleep(.5)
+    sleep(1)
     # extract the information needed, id, name, affiliation
     google_id = driver.current_url.split('&user=')[1]
     name = driver.find_element_by_id('gsc_prf_in').text
@@ -89,6 +93,7 @@ def analyze(author, paper, value):
     while not more_papers_button.get_attribute('disabled'):
       more_papers_button.click()
       more_papers_button = driver.find_element_by_id("gsc_bpf_more")
+      sleep(.5)
     sleep(1)
     # extract the publications links and titles
     publications = driver.find_elements_by_xpath("//*[@id=\"gsc_a_b\"]/tr/td[1]/a")
@@ -155,8 +160,6 @@ while True:
     # extract from the queue the pair (author, paper name)
     _, key, value = r.bzpopmax('ltc', 5)
     [author, paper] = json.loads(key)
-    # remove them from the queue
-    #r.ltrim('ltc', 2, -1)
     # redis stores bytes, convert them to string
     author = author.decode('UTF-8') if not isinstance(author, str) else author
     paper = paper.decode('UTF-8') if not isinstance(paper, str) else paper

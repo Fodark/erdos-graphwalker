@@ -55,7 +55,7 @@ while True:
         id_ = id_.decode('UTF-8') # passiamo da lista di bytes a stringa
         logging.info("CONSUMER: analyzing {} w/ priority {}".format(id_, value))
         if not r.get(id_):
-            time.sleep(.5)
+            time.sleep(5)
             extract_coauthors(id_, value)
     except:
         pass 
