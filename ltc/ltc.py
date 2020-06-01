@@ -6,7 +6,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 import json
 
 logging.basicConfig(level=logging.INFO)
@@ -52,9 +54,12 @@ def analyze(author, paper, value):
   logging.info("LTC: query sent")
   # try to find the "profiles for" link in the page, if none it means no author with that name exist on gscholar
   try:
+    element_present = EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, author))
+    WebDriverWait(driver, 5).until(element_present)
     elem = driver.find_element_by_partial_link_text(author)
-  except:
-    logging.info("LTC: No gscholar with this name and paper")
+  except Exception as e:
+    logging.info(e)
+    logging.info("LTC: No gscholars")
     with neo_driver.session() as session:
       session.write_transaction(add_authorship_relation, None, author, paper)
     return
@@ -91,7 +96,7 @@ def analyze(author, paper, value):
 
     # check if the author has the required publication
     # if not, skip him/her
-    if paper != "0" and not paper in publications_titles:
+    if paper != "no_paper" and not paper in publications_titles:
       logging.info("{} does not have the publication".format(google_id))
       driver.back()
       profiles = driver.find_elements_by_xpath("/html/body/div/div[8]/div[2]/div/div/div/div/h3/a")
@@ -136,8 +141,8 @@ def analyze(author, paper, value):
     break
 
   # the cycle ended, was it because it was found or not?
-  logging.info("LTC: No gscholar with this name and paper")
   if not found:
+    logging.info("LTC: No gscholar with this name and paper")
     with neo_driver.session() as session:
       session.write_transaction(add_authorship_relation, None, author, paper)
 
@@ -159,5 +164,6 @@ while True:
     # start analysis
     analyze(author, paper, value)
   except Exception as e:
+    logging.info(e)
     # the queue was empty, wait and repeat
     sleep(3)
