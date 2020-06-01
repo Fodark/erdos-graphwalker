@@ -118,12 +118,14 @@ def analyze(author, paper, value):
     logging.info("LTC: adding author node {}: {}".format(google_id, name))
     with neo_driver.session() as session:
       session.write_transaction(add_author_node, name, affiliation, google_id)
+      r.set('{}.papers.analyzed'.format(google_id), 1)
       # iterate over every publication
       for idx, emm in enumerate(publications):
         sleep(.5)
         # click the pub link
         driver.execute_script("arguments[0].click();", emm)
         # extract title and authors
+        sleep(.5)
         title_div = driver.find_element_by_id('gsc_vcd_title')
         title = title_div.text
         author_div = driver.find_element_by_class_name('gsc_vcd_value')
@@ -141,8 +143,6 @@ def analyze(author, paper, value):
         # close the publication and go to the next one
         close_button = driver.find_element_by_id('gs_md_cita-d-x')
         close_button.click()
-    
-    r.set('{}.papers.analyzed'.format(google_id), 1)
     break
 
   # the cycle ended, was it because it was found or not?
