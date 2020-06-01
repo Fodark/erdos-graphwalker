@@ -1,20 +1,7 @@
-#FROM gcr.io/distroless/python3-debian10
-#COPY . /app
-#WORKDIR /app
-#RUN pip install -r requirements.txt
-#ENTRYPOINT ["python"]
-#CMD ["app.py"]
-
-FROM python:3.8-slim AS build-env
-ADD . /app
+FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.8
+RUN mkdir -p /app
+COPY . /app
 WORKDIR /app
-RUN pip install --upgrade pip
-RUN pip install -r ./requirements.txt
-
-FROM gcr.io/distroless/python3-debian10
-COPY --from=build-env /app /app
-COPY --from=build-env /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
-WORKDIR /app
-ENV PYTHONPATH=/usr/local/lib/python3.8/site-packages
-EXPOSE 5000
-CMD ["app.py"]
+RUN pip install --no-cache-dir -r requirements.txt
+ENV FLASK_APP=app.py
+CMD ./wait-for neo:7474 -- flask run -h 0.0.0.0 -p 5000

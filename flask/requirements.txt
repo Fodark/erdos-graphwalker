@@ -1,1 +1,6 @@
 Flask==1.1.2 
+Flask-Cors==3.0.8 
+redis==3.5.2
+neo4j==1.7.6
+requests==2.23.0
+beautifulsoup4==4.9.1

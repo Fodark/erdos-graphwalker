@@ -2,7 +2,9 @@ version: '3'
 
 services:
   neo:
-    image: neo4j:3.5.14-enterprise
+    build: 
+      context: ./neo4j
+      dockerfile: Dockerfile
     ports: 
       - 7474:7474
       - 7687:7687
@@ -11,10 +13,9 @@ services:
     environment: 
       NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
       NEO4J_AUTH: "neo4j/test"
-      NEO4JLABS_PLUGINS: "[\"apoc\", \"graph-algorithms\"]"
     volumes:
       - "./neo4j/data:/data"
-      - "./neo4j/conf:/conf"
+      #- "./neo4j/conf:/conf"
       - "./neo4j/plugins:/plugins"
       - "./neo4j/import:/import"
       - "./neo4j/logs:/logs"
@@ -26,7 +27,12 @@ services:
       dockerfile: Dockerfile
     ports: 
       - 5000:5000
+    volumes:
+      - "./flask:/usr/src/app"
     networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
   
   react:
     build:
@@ -39,6 +45,36 @@ services:
       - "./client:/app"
       - "./client/app/node_modules"
     stdin_open: true
+    depends_on: 
+      - flask
+  
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    networks: [bdt]
+    volumes:
+      - "./redis-data:/data"
+  
+  ltc:
+    build:
+      context: ./ltc
+      dockerfile: Dockerfile
+    hostname: ltc
+    networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
+  
+  stc:
+    build:
+      context: ./stc
+      dockerfile: Dockerfile
+    hostname: stc
+    networks: [bdt]
+    depends_on: 
+      - neo
+      - redis
 
 networks: 
   bdt:

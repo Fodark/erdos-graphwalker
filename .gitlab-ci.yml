@@ -1,0 +1,40 @@
+image:
+  name: docker/compose:latest
+  entrypoint: ["/bin/sh", "-c"]
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  FLASK_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_flask:latest
+  REACT_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_react:latest
+  NEO_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_neo:latest
+  LTC_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_ltc:latest
+  STC_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_stc:latest
+
+services:
+  - docker:dind
+
+stages:
+- build_images
+- tag_images
+- push_images
+
+before_script:
+  - docker version
+  - docker-compose version
+  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+build:
+  stage: build_images
+  script:
+    - docker-compose build
+    - docker tag bdt-project_flask $FLASK_IMAGE
+    - docker tag bdt-project_react $REACT_IMAGE
+    - docker tag bdt-project_ltc $LTC_IMAGE
+    - docker tag bdt-project_stc $STC_IMAGE
+    - docker tag bdt-project_neo $NEO_IMAGE
+    - docker push $FLASK_IMAGE
+    - docker push $REACT_IMAGE
+    - docker push $LTC_IMAGE
+    - docker push $STC_IMAGE
+    - docker push $NEO_IMAGE
