@@ -7,7 +7,6 @@ variables:
   DOCKER_DRIVER: overlay2
   FLASK_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_flask:latest
   REACT_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_react:latest
-  REDIS_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_redis:latest
   NEO_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_neo:latest
   LTC_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_ltc:latest
   STC_IMAGE: registry.gitlab.com/fodark/bdt-project/bdt-project_stc:latest
@@ -33,7 +32,9 @@ build:
     - docker tag bdt-project_react $REACT_IMAGE
     - docker tag bdt-project_ltc $LTC_IMAGE
     - docker tag bdt-project_stc $STC_IMAGE
+    - docker tag bdt-project_neo $NEO_IMAGE
     - docker push $FLASK_IMAGE
     - docker push $REACT_IMAGE
     - docker push $LTC_IMAGE
     - docker push $STC_IMAGE
+    - docker push $NEO_IMAGE

@@ -2,7 +2,9 @@ version: '3'
 
 services:
   neo:
-    image: neo4j:3.5.14-enterprise
+    build: 
+      context: ./neo4j
+      dockerfile: Dockerfile
     ports: 
       - 7474:7474
       - 7687:7687
@@ -13,7 +15,7 @@ services:
       NEO4J_AUTH: "neo4j/test"
     volumes:
       - "./neo4j/data:/data"
-      - "./neo4j/conf:/conf"
+      #- "./neo4j/conf:/conf"
       - "./neo4j/plugins:/plugins"
       - "./neo4j/import:/import"
       - "./neo4j/logs:/logs"
