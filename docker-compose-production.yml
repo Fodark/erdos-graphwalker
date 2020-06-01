@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  neo:
+    image: registry.gitlab.com/fodark/bdt-project/bdt-project_neo
+    ports: 
+      - 7474:7474
+      - 7687:7687
+    expose: 
+      - 7474
+    environment: 
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: "neo4j/test"
+    volumes:
+      - "./neo4j/data:/data"
+      #- "./neo4j/conf:/conf"
+      - "./neo4j/plugins:/plugins"
+      - "./neo4j/import:/import"
+      - "./neo4j/logs:/logs"
+    networks: [bdt]
+  
+  flask:
+    image: registry.gitlab.com/fodark/bdt-project/bdt-project_flask
+    networks: [bdt]
+  
+  react:
+    image: registry.gitlab.com/fodark/bdt-project/bdt-project_react
+    ports: 
+      - 80:3000
+    stdin_open: true
+    networks: [bdt]
+    
+
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    networks: [bdt]
+    volumes:
+      - "./redis-data:/data"
+  
+  ltc:
+    image: registry.gitlab.com/fodark/bdt-project/bdt-project_ltc
+    networks: [bdt]
+  
+  stc:
+    image: registry.gitlab.com/fodark/bdt-project/bdt-project_stc
+    networks: [bdt]
+
+networks: 
+  bdt:
