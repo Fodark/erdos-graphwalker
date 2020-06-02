@@ -2,7 +2,12 @@
  
 The project provides a set of API to retrieve the coauthorship graph of a given author and builds the equivalent of the Erdos distance for the person requested.
 The system, from the first requests, keeps collecting every coauthor in a recursive manner in two parallel ways, through the direct coauthors defined by the person itself on GScholar and from analyzing the publications and extracting every coauthor.
- 
+
+A live version can be found at: http://104.155.115.87/, precomputed graphs can be found for:
+- Daniele Miorandi
+- Ivano Bison
+- Alberto Montresor
+
 ### Structure
  
 The project is organized in 6 dockerized microservices in the following folders (Redis is not listed as it does not need any particular configuration), every folder contains at least one Dockerfile.
