@@ -45,29 +45,7 @@ def analyze(author, paper, value):
   driver = webdriver.Chrome(options=chrome_options)
   driver.set_window_size(960, 1080)
   driver.implicitly_wait(4)
-  # connect to gscholar
-  #driver.get("https://scholar.google.com/")
-  #sleep(1)
-  # find the text field in the page
-  #elem = driver.find_element_by_name("q")
-  #elem.clear()
-  # send the author name
-  #elem.send_keys(author)
-  #elem.send_keys(Keys.RETURN)
-  #logging.info("LTC: query sent")
-  # try to find the "profiles for" link in the page, if none it means no author with that name exist on gscholar
-  #try:
-  #  element_present = EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, author))
-  #  WebDriverWait(driver, 5).until(element_present)
-  #  elem = driver.find_element_by_partial_link_text(author)
-  #except Exception as e:
-  #  logging.info(e)
-  #  logging.info("LTC: No gscholars")
-  #  with neo_driver.session() as session:
-  #    session.write_transaction(add_authorship_relation, None, author, paper)
-  #  return
   
-  #elem.click()
   logging.info("LTC: entering profile page")
   #sleep(1)
   driver.get(AUTHORS_PAGE_URL.format(author))
